@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <math.h>
+
+/* 
+  !!!
+	it's not ready!
+  !!!
+*/
+
+// Butterworth aluláteresztő szűrő tervezése
+void butterworth_lpf(int order, double cutoff_frequency, double sampling_rate, double *b, double *a) {
+    int i = -1;
+    double wc = 2.0 * M_PI * cutoff_frequency / sampling_rate;  // Normalizált vágási frekvencia
+
+    // Koefficiensek inicializálása
+	while (++i <= order)
+        b[i] = 0.0,
+        a[i] = 0.0;
+    
+    // Szűrőkoefficiensek számítása
+	while (++i <= order)
+        b[i] = pow(wc, order - i),
+        a[i] = nCr(order, i) * pow(wc, i);
+    
+}
+
+// Binomiális együttható számítása
+int nCr(int n, int r) {
+	return (r == 0 || r == n) ? 1 : nCr(n - 1, r - 1) + nCr(n - 1, r);
+}
+
+int main() {
+    // Szűrő paraméterek
+    int order = 3;                  // Rend
+    double cutoff_frequency = 500;  // Vágási frekvencia (Hz)
+    double sampling_rate = 1000;    // Mintavételi frekvencia (Hz)
+
+    // Szűrőkoefficiensek
+    double b[order + 1], a[order + 1];
+
+    // Butterworth LPF tervezése
+    butterworth_lpf(order, cutoff_frequency, sampling_rate, b, a);
+
+    // Kiíratás
+    printf("Butterworth LPF koefficiensek:\n");
+    printf("b[] = { ");
+	int i = -1;
+	while (++i <= order)
+        printf("%f ", b[i]);
+    printf("}\n");
+
+    printf("a[] = { ");
+	i = -1;
+	while (++i <= order)
+        printf("%f ", a[i]);
+    printf("}\n");
+
+    return 0;
+}
