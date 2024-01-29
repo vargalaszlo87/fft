@@ -8,7 +8,7 @@
 */
 
 // Butterworth aluláteresztő szűrő tervezése
-void butterworth_lpf(int order, double cutoff_frequency, double sampling_rate, double *b, double *a) {
+void lpfButterworthCoeff(int order, double cutoff_frequency, double sampling_rate, double *b, double *a) {
     int i = -1;
     double wc = 2.0 * M_PI * cutoff_frequency / sampling_rate;  // Normalizált vágási frekvencia
 
@@ -28,6 +28,32 @@ void butterworth_lpf(int order, double cutoff_frequency, double sampling_rate, d
 int nCr(int n, int r) {
 	return (r == 0 || r == n) ? 1 : nCr(n - 1, r - 1) + nCr(n - 1, r);
 }
+
+double lpfButterworth(double *b, double *a, int order, double *x, double *y, double input) {
+    // Szűrőművelet
+    int i;
+    double output = 0.0;
+
+    // Input hozzáadása az x bufferhez
+    i = order - 2; /* -1 */
+    while (--i > 0)
+        x[i] = x[i - 1]
+    x[0] = input;
+
+    // Szűrő művelet
+    i = -1;
+    while( ++i <= order)
+        output += b[i] * x[i] - a[i] * y[i];
+
+    // Output hozzáadása az y bufferhez
+    i = order - 2; /* -1 */
+    while (--i > 0)
+        y[i] = y[i - 1];
+    y[0] = output;
+
+    return output;
+}
+
 
 int main() {
     // Szűrő paraméterek
