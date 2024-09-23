@@ -3,7 +3,6 @@
 #include <math.h>
 #include <complex.h>
 
-
 // make a sine-wave
 #define SAMPLE	4096
 #define FREQUENCY	5e2
@@ -18,10 +17,44 @@
 #define M_PI 3.1415926538
 #endif
 
+typedef struct fft_ {
+    double samplingPeriod;
+    int samplingSize;
+} fftSetup;
 
-void windowHamming(complex double* signal, int size) {
-    for (int i = 0; i < size; i++)
-        signal[i] *= 0.54 - 0.46 * cos(2 * M_PI * i / (size - 1));
+enum {
+    HAMMING,
+    HANNING,
+    BLACKMAN,
+    BARTLETT,
+    enumSize
+};
+
+// core
+
+// windows
+void Hamming(complex double* signal, int size) {
+	int i = -1;
+    while (++i < size)
+        signal[i] *= 0.54 - 0.46 * cos(2.0 * M_PI * i / (size - 1));
+}
+
+void Hanning(complex double* signal, int size) {
+    int i = -1;
+    while (++i < size)
+        signal[i] *= 0.5 * (1.0 - cos(2.0 * M_PI * i / (size - 1)));
+}
+
+void Blackman(complex double* signal, int size) {
+    int i = -1;
+    while (++i < size)
+        signal[i] *= 0.42 - 0.5 * cos(2.0 * M_PI * i / (size - 1)) + 0.08 * cos(4.0 * M_PI * i / (size - 1));
+}
+
+void Bartlett(complex double* signal, int size) {
+    int i = -1;
+    while (++i < size)
+        signal[i] *= 1.0 - fabs((i - (size - 1) / 2.0) / ((size - 1) / 2.0));
 }
 
 void fft(complex double* x, int size) {
@@ -34,18 +67,51 @@ void fft(complex double* x, int size) {
     while (++i < size / 2 )
         even[i] = x[i * 2],
         odd[i] = x[i * 2 + 1];
-        
+
     fft(even, size / 2);
     fft(odd, size / 2);
-    
+
     i = -1;
     while (++i < size / 2 ) {
         complex double t = cexp(-2.0 * I * M_PI * i / size) * odd[i];
         x[i] = even[i] + t;
         x[i + size / 2] = even[i] - t;
     }
+
     free(even);
     free(odd);
+}
+
+double* results(complex double* signal, double samplingPeriod, int size, int type) {
+    double* out = (double*)calloc(size / 2, sizeof(double));
+    if (!out) {
+        fprintf(stderr, "Failed memory allocation.\n");
+        exit(1);
+    }
+    double samplingFrequency = 1 / samplingPeriod;
+    for (int k = 0; k < SAMPLE / 2; k++) {
+        *(out + k) = (type) ? sqrt(creal(signal[k]) * creal(signal[k]) + cimag(signal[k]) * cimag(signal[k])) : (double)k * samplingFrequency / size;
+    }
+    return out;
+}
+
+// interfaces
+void makeWindow(complex double* signal, fftSetup* setup, int windowType) {
+    void (*window[])(complex double*, int) = {Hamming, Hanning, Blackman, Bartlett};
+    windowType = (windowType > enumSize - 1 || windowType < 0) ? 0 : windowType;
+    window[windowType](signal, setup->samplingSize);
+}
+
+void makeFFT(complex double* signal, fftSetup* setup) {
+    fft(signal, setup->samplingSize);
+}
+
+double *getAmplitude(complex double* signal, fftSetup *s) {
+    return results(signal, s->samplingPeriod, s->samplingSize, 1);
+}
+
+double *getFrequency(complex double* signal, fftSetup *s) {
+    return results(signal, s->samplingPeriod, s->samplingSize, 0);
 }
 
 int main(int argc, char* argv[]) {
@@ -54,19 +120,25 @@ int main(int argc, char* argv[]) {
 	complex double signal[SAMPLE];
 	for (int i = 0 ; i < SAMPLE; i++) {
 		signal[i] = AMPLITUDE * cexp(I * 2 * M_PI * FREQUENCY * dt * i) + AMPLITUDE * 0.2 * cexp(I * 2 * M_PI * FREQUENCY2 * dt * i);
-	}	
-	
+	}
+
 // use Hamming window and make FFT
-	windowHamming(signal, SAMPLE);
-	fft(signal, SAMPLE);
-	
+
+    fftSetup set = {1e-4, 4096};
+
+	makeWindow(signal, &set, 7);
+	makeFFT(signal, &set);
+	double* amplitude = getAmplitude(signal, &set);
+	double* frequency = getFrequency(signal, &set);
+
+
 // show results
     printf("Frequency (Hz) | Amplitude\n");
     for (int k = 0; k < SAMPLE / 2; k++) {  // first N/2
-        double frequency = (double)k * FS / SAMPLE;
-        double amplitude = sqrt(creal(signal[k]) * creal(signal[k]) + cimag(signal[k]) * cimag(signal[k]));
-        printf("%f Hz | %f\n", frequency, amplitude);
-    }	
-	
+        //double frequency = (double)k * FS / SAMPLE;
+        //double amplitude = sqrt(creal(signal[k]) * creal(signal[k]) + cimag(signal[k]) * cimag(signal[k]));
+        printf("%f Hz | %f\n", frequency[k], amplitude[k]);
+    }
+
 	return 0;
 }
