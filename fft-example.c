@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <complex.h>
+#include <stddef.h>
 
 // make a sine-wave
 #define SAMPLE	4096
@@ -29,8 +30,6 @@ enum {
     BARTLETT,
     enumSize
 };
-
-// core
 
 // windows
 void Hamming(complex double* signal, int size) {
@@ -122,23 +121,30 @@ int main(int argc, char* argv[]) {
 		signal[i] = AMPLITUDE * cexp(I * 2 * M_PI * FREQUENCY * dt * i) + AMPLITUDE * 0.2 * cexp(I * 2 * M_PI * FREQUENCY2 * dt * i);
 	}
 
-// use Hamming window and make FFT
+// use it
 
+    // setup (sampling period, sample size)
     fftSetup set = {1e-4, 4096};
 
-	makeWindow(signal, &set, 7);
+    // making
+	makeWindow(signal, &set, BLACKMAN);
 	makeFFT(signal, &set);
+
+	// results
 	double* amplitude = getAmplitude(signal, &set);
 	double* frequency = getFrequency(signal, &set);
 
-
-// show results
+    // show
     printf("Frequency (Hz) | Amplitude\n");
     for (int k = 0; k < SAMPLE / 2; k++) {  // first N/2
-        //double frequency = (double)k * FS / SAMPLE;
-        //double amplitude = sqrt(creal(signal[k]) * creal(signal[k]) + cimag(signal[k]) * cimag(signal[k]));
         printf("%f Hz | %f\n", frequency[k], amplitude[k]);
     }
+
+
+    // destroy
+    free(&signal);
+    free(&set);
+
 
 	return 0;
 }
