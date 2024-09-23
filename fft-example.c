@@ -127,7 +127,7 @@ int main(int argc, char* argv[]) {
     fftSetup set = {1e-4, 4096};
 
     // making
-	makeWindow(signal, &set, BLACKMAN);
+	makeWindow(signal, &set, BARTLETT);
 	makeFFT(signal, &set);
 
 	// results
@@ -140,11 +140,11 @@ int main(int argc, char* argv[]) {
         printf("%f Hz | %f\n", frequency[k], amplitude[k]);
     }
 
-
     // destroy
-    free(&signal);
-    free(&set);
-
+    free(amplitude);
+    free(frequency);
+    amplitude = NULL;
+    frequency = NULL;
 
 	return 0;
 }
