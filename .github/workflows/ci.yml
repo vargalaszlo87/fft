@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: C Test with GCC
 
 on:
   push:
@@ -13,17 +13,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Clean build directory
-      run: rm -rf build
-
     - name: Install dependencies
-      run: sudo apt-get install check
+      run: sudo apt-get update
 
-    - name: Configure CMake
-      run: cmake -S . -B build
-
-    - name: Build with CMake
-      run: cmake --build build
-
-    - name: Run tests
-      run: ./build/test_fft
+    - name: Build and run tests
+      run: |
+        gcc -o fft_test src/fft.c tests/test_fft.c -lm -std=c11
+        ./fft_test
