@@ -4,6 +4,10 @@
 #include <complex.h>
 #include <stddef.h>
 
+#ifndef M_PI
+#define M_PI 3.1415926538
+#endif
+
 void fft(complex double* x, int size) {
     if (size <= 1)
         return;
