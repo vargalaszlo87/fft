@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <complex.h>
-#include <assert.h>
-
+#include "../include/fft.h"
 #include "../src/fft.c"  
 
 #define EPSILON 1e-6
