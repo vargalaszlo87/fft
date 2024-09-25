@@ -51,5 +51,7 @@ int main(int argc, char* argv[]) {
     amplitude = NULL;
     frequency = NULL;
 
+    getchar();
+
 	return 0;
 }
