@@ -3,6 +3,7 @@
 #include <math.h>
 #include <complex.h>
 #include <stddef.h>
+#include <assert.h>
 
 #include "../include/fft.h"
 #include "../src/fft.c"  
