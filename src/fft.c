@@ -1,3 +1,9 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <complex.h>
+#include <stddef.h>
+
 #include "../include/fft.h"
 
 // windows
