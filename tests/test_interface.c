@@ -8,11 +8,6 @@
 
 #define EPSILON 1e-6
 
-typedef struct {
-    double samplingPeriod;
-    int samplingSize;
-} fftSetup;
-
 void test_makeWindow() {
     fftSetup setup = { .samplingPeriod = 1e-6, .samplingSize = 4 };
     complex double signal[] = {1.0, 2.0, 3.0, 4.0};
