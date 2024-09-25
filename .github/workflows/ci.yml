@@ -16,7 +16,12 @@ jobs:
     - name: Install dependencies
       run: sudo apt-get update
 
-    - name: Build and run tests
+    - name: Build and run fft test
       run: |
         gcc -o fft_test tests/test_fft.c -lm -std=c99
         ./fft_test
+
+    - name: Build and run intreface test
+      run: |
+        gcc -o interface_test tests/test_interface.c -lm -std=c99
+        ./interface_test
