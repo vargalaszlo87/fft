@@ -1,4 +1,4 @@
-include "../include/fft.h"
+#include "../include/fft.h"
 
 // windows
 void Hamming(complex double* signal, int size) {

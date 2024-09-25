@@ -1,4 +1,4 @@
-include "../include/fft.h"
+#include "../include/fft.h"
 
 // interfaces
 void makeWindow(complex double* signal, fftSetup* setup, int windowType) {
