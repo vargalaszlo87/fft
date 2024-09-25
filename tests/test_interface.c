@@ -6,6 +6,7 @@
 #include <assert.h>
 
 #include "../include/fft.h"
+#include "../src/interface.c"
 #include "../src/fft.c"  
 
 #define EPSILON 1e-6
