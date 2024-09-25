@@ -72,7 +72,7 @@ double* results(complex double* signal, double samplingPeriod, int size, int typ
         exit(1);
     }
     double samplingFrequency = 1 / samplingPeriod;
-    for (int k = 0; k < SAMPLE / 2; k++) {
+    for (int k = 0; k < size / 2; k++) {
         *(out + k) = (type) ? sqrt(creal(signal[k]) * creal(signal[k]) + cimag(signal[k]) * cimag(signal[k])) : (double)k * samplingFrequency / size;
     }
     return out;
