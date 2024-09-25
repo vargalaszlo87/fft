@@ -11,7 +11,12 @@
 void test_hamming_window() {
     int size = 4;
     complex double signal[] = {1.0, 2.0, 3.0, 4.0};
-    complex double expected[] = {0.54, 1.08, 1.62, 2.16}; 
+    complex double expected[] = {
+        1.0 * (0.54 - 0.46 * cos(0)),               // w(0)
+        2.0 * (0.54 - 0.46 * cos(2 * M_PI / 3)),    // w(1)
+        3.0 * (0.54 - 0.46 * cos(4 * M_PI / 3)),    // w(2)
+        4.0 * (0.54 - 0.46 * cos(2 * M_PI))         // w(3)
+    };
 
     Hamming(signal, size);
 
@@ -25,7 +30,12 @@ void test_hamming_window() {
 void test_hanning_window() {
     int size = 4;
     complex double signal[] = {1.0, 2.0, 3.0, 4.0};
-    complex double expected[] = {0.0, 1.5, 3.0, 0.0}; 
+    complex double expected[] = {
+        1.0 * (0.5 * (1 - cos(0))),               // w(0)
+        2.0 * (0.5 * (1 - cos(2 * M_PI / 3))),    // w(1)
+        3.0 * (0.5 * (1 - cos(4 * M_PI / 3))),    // w(2)
+        4.0 * (0.5 * (1 - cos(2 * M_PI)))         // w(3)
+    };
 
     Hanning(signal, size);
 
@@ -39,7 +49,12 @@ void test_hanning_window() {
 void test_blackman_window() {
     int size = 4;
     complex double signal[] = {1.0, 2.0, 3.0, 4.0};
-    complex double expected[] = {0.42, 1.26, 1.62, 2.16}; 
+    complex double expected[] = {
+        1.0 * (0.42 - 0.5 * cos(0) + 0.08 * cos(0)),                    // w(0)
+        2.0 * (0.42 - 0.5 * cos(2 * M_PI / 3) + 0.08 * cos(4 * M_PI / 3)),  // w(1)
+        3.0 * (0.42 - 0.5 * cos(4 * M_PI / 3) + 0.08 * cos(8 * M_PI / 3)),  // w(2)
+        4.0 * (0.42 - 0.5 * cos(2 * M_PI) + 0.08 * cos(4 * M_PI))           // w(3)
+    };
 
     Blackman(signal, size);
 
