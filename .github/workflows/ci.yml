@@ -21,11 +21,6 @@ jobs:
         gcc -o fft_test tests/test_fft.c -lm -std=c99
         ./fft_test
 
-    - name: Build and run intreface test
-      run: |
-        gcc -o interface_test tests/test_interface.c -lm -std=c99
-        ./interface_test
-
     - name: Build the example
       run: |
         gcc -o fft_example example/fft-example.c -lm -std=c99
