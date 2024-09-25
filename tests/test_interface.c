@@ -52,7 +52,7 @@ void test_getAmplitude() {
         assert(fabs(amplitudes[i] - expected[i]) < EPSILON);
     }
 
-    free(amplitudes);  /
+    free(amplitudes); 
     printf("getAmplitude test passed.\n");
 }
 
